@@ -48,10 +48,11 @@ mkdir ${tmp_folder}
 # copy file to tmp Folder
 cp ${file} ${tmp_folder}
 cd ${tmp_folder}
-echo "unoconv -f pdf ${file}"
-unoconv -f pdf ${file}
-file="${prefix}.pdf"
-echo ${file}
+
+if [ "${suffix}" != "pdf" ]; then
+	unoconv -f pdf ${file}
+	file="${prefix}.pdf"
+fi
 
 #step_1
 echo -ne "convert ${file} --> $prefix.png\n"
@@ -80,11 +81,12 @@ scale=0
 ${kindle_scale} * ${image_h}
 EOF
 `
-debug "w extent to: " ${extent_w}
+debug "w extent to: ${extent_w}"
 
 total_pixel=`bc << EOF
 scale=0
 ${extent_w} * ${image_h}
+EOF
 `
 
 #image resize
