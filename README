@@ -1,0 +1,7 @@
+scale slide for kindle screen.
+
+# step-0 : check suffix if file is not pdf format. convert it to pdf by unoconv
+# step-1 : convert pdf to png
+# step-2 : resize png let it fit in with kindle screen
+# step-3 : combination
+
