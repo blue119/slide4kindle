@@ -14,6 +14,9 @@ float_scale=2
 #space instead of _
 if [ `echo "$1" | awk '/\ /' | wc -l` -gt 0 ]; then
 	file=`echo "$1" | sed -n 's/\ /_/pg'`
+	mv_file=`echo "$1" | sed -n 's/\ /\\\ /pg'`
+	mv ${mv_file} ${file}
+	echo "mv ${mv_file} ${file}"
 else
 	file="$1"
 fi
@@ -76,27 +79,28 @@ if [ "${suffix}" != "pdf" ]; then
 fi
 
 #step_1
-echo -ne "convert ${file} --> $prefix.png\n"
-convert -interlace none ${file} ${prefix}.png
+echo -ne "convert ${file} --> $prefix.jpg\n"
+# convert -interlace none -colorspace RGB -limit memory 1 -limit map 1 -density 200 -compress jpeg ${file} ${prefix}.jpg
+convert -interlace none -colorspace RGB -limit memory 1 -limit map 1 -density 300 -compress jpeg ${file} ${prefix}.jpg
 
 #step_2
-file_num=$(ls *.png | wc -l)
+file_num=$(ls *.jpg | wc -l)
 debug "file_size: ${file_num}"
 slide_list=`for (( i=0; i<${file_num}; i++)); do
-	echo "${prefix}-$i.png"
+	echo "${prefix}-$i.jpg"
 done`
 
-image_w=`identify -format "%w" ${prefix}-0.png`
-image_h=`identify -format "%h" ${prefix}-0.png`
+image_w=`identify -format "%w" ${prefix}-0.jpg`
+image_h=`identify -format "%h" ${prefix}-0.jpg`
 
-if [ ${image_w} -lt 450 ]; then
-#the image to small, blow up it.
-	up_scale=$(float_eval "800 / ${image_w}")
-	density=$(float_eval "72 * ${up_scale}")
-	convert -interlace none -density ${density} ${file} ${prefix}.png
-	image_w=`identify -format "%w" ${prefix}-0.png`
-	image_h=`identify -format "%h" ${prefix}-0.png`
-fi
+# if [ ${image_w} -lt 450 ]; then
+# the image to small, blow up it.
+	# up_scale=$(float_eval "800 / ${image_w}")
+	# density=$(float_eval "72 * ${up_scale}")
+	# convert -interlace none -density ${density} ${file} ${prefix}.png
+	# image_w=`identify -format "%w" ${prefix}-0.png`
+	# image_h=`identify -format "%h" ${prefix}-0.png`
+# fi
 
 ori_scale==$(float_eval "${image_w} / ${image_h}")
 debug "ori scale" ${ori_scale}
@@ -111,12 +115,13 @@ debug "total pixel: ${total_pixel}"
 echo -ne "image resize to ${extent_w}x${image_h}\n"
 debug "convert $i -thumbnail ${total_pixel}@ -gravity center -background white -extent ${extent_w}x${image_h} $i"
 for i in ${slide_list}; do
-	convert $i -thumbnail ${total_pixel}@ -gravity center -background white -extent ${extent_w}x${image_h} $i
+	convert -limit memory 1 -limit map 1 $i -thumbnail ${total_pixel}@ -density 300 -gravity center -background white -unsharp 0x.5 -extent ${extent_w}x${image_h} $i
 done
 
 #step_3
 echo -ne "composing to ${prefix}_kindle.pdf\n"
-convert -density 72 ${slide_list} ${prefix}_kindle.pdf
+convert -density 300 -limit memory 1 -limit map 1 ${slide_list} ${prefix}_kindle.pdf
+# convert -density 72 ${slide_list} ${prefix}_kindle.pdf
 
 #final
 cp ${prefix}_kindle.pdf ${store}
