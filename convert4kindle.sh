@@ -81,7 +81,7 @@ fi
 #step_1
 echo -ne "convert ${file} --> $prefix.jpg\n"
 # convert -interlace none -colorspace RGB -limit memory 1 -limit map 1 -density 200 -compress jpeg ${file} ${prefix}.jpg
-convert -interlace none -colorspace RGB -limit memory 1 -limit map 1 -density 300 -compress jpeg ${file} ${prefix}.jpg
+convert -interlace none -colorspace RGB -limit memory 1 -limit map 1 -compress jpeg ${file} ${prefix}.jpg
 
 #step_2
 file_num=$(ls *.jpg | wc -l)
@@ -102,7 +102,7 @@ image_h=`identify -format "%h" ${prefix}-0.jpg`
 	# image_h=`identify -format "%h" ${prefix}-0.png`
 # fi
 
-ori_scale==$(float_eval "${image_w} / ${image_h}")
+ori_scale=$(float_eval "${image_w} / ${image_h}")
 debug "ori scale" ${ori_scale}
 
 extent_w=$(float_eval "${kindle_scale} * ${image_h}")
@@ -115,12 +115,12 @@ debug "total pixel: ${total_pixel}"
 echo -ne "image resize to ${extent_w}x${image_h}\n"
 debug "convert $i -thumbnail ${total_pixel}@ -gravity center -background white -extent ${extent_w}x${image_h} $i"
 for i in ${slide_list}; do
-	convert -limit memory 1 -limit map 1 $i -thumbnail ${total_pixel}@ -density 300 -gravity center -background white -unsharp 0x.5 -extent ${extent_w}x${image_h} $i
+	convert -limit memory 1 -limit map 1 $i -thumbnail ${total_pixel}@ -gravity center -background white -unsharp 0x.5 -extent ${extent_w}x${image_h} $i
 done
 
 #step_3
 echo -ne "composing to ${prefix}_kindle.pdf\n"
-convert -density 300 -limit memory 1 -limit map 1 ${slide_list} ${prefix}_kindle.pdf
+convert -limit memory 1 -limit map 1 ${slide_list} ${prefix}_kindle.pdf
 # convert -density 72 ${slide_list} ${prefix}_kindle.pdf
 
 #final
