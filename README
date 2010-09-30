@@ -1,7 +1,12 @@
-scale slide for kindle screen.
+1. convert4kindle.sh : scale slide for kindle screen by imagemagick.
+step-0 : check suffix if file is not pdf format. convert it to pdf by unoconv
+step-1 : convert pdf to png
+step-2 : resize png let it fit in with kindle screen
+step-3 : combination
 
-# step-0 : check suffix if file is not pdf format. convert it to pdf by unoconv
-# step-1 : convert pdf to png
-# step-2 : resize png let it fit in with kindle screen
-# step-3 : combination
+2. over_crop.py : another scale tools for slide by pyPdf
+it is purposed to scale-out-crop for the kindle resolution by Pdf. but the kindle 
+3 is too smart that will auto-cutting white margin. it is not only scale-out-crop 
+for kindle but alos addition two samll circle at lowleft and upperrigh to spin its 
+margin.
 
