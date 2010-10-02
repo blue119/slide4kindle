@@ -2,9 +2,19 @@
 
 import getopt, sys
 from random import uniform
-from pyPdf import PdfFileWriter, PdfFileReader
-from reportlab.pdfgen import canvas
-from reportlab.lib.colors import green
+
+try:
+	from pyPdf import PdfFileWriter, PdfFileReader
+except ImportError:
+	print "Can't find pyPdf module, Please install it at first."
+	sys.exit(1)
+
+try:
+	from reportlab.pdfgen import canvas
+	from reportlab.lib.colors import green
+except ImportError:
+	print "Can't find reportlab module, Please install it at first."
+	sys.exit(1)
 
 rfn = '/tmp/' + str(uniform(1, 100))
 output_suffix = "pdf"
